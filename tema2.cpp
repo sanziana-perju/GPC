@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-#include "glut.h"
+#include "GL/freeglut.h"
+#include "GL/gl.h" //cauta in calea locala
+#include <cmath>
+const double EulerConstant = std::exp(1.0);
 
 // dimensiunea ferestrei in pixeli
 #define dim 300
@@ -14,6 +16,7 @@ unsigned char prevKey;
 // $x = a + b \cdot cos(t), y = a \cdot tg(t) + b \cdot sin(t)$. sau
 // $x = a - b \cdot cos(t), y = a \cdot tg(t) - b \cdot sin(t)$. unde
 // $t \in (-\pi / 2, \pi / 2)$
+
 void Display1() {
    double xmax, ymax, xmin, ymin;
    double a = 1, b = 2;
@@ -96,6 +99,299 @@ void Display2() {
    glEnd();
 }
 
+void Display3() {
+    double xmax, ymax, xmin, ymin;
+    double a = 0.3, b = 0.2;
+    double pi = 4 * atan(1.0);
+    double ratia = 0.01;
+    double t;
+ 
+    // calculul valorilor maxime/minime ptr. x si y
+    // aceste valori vor fi folosite ulterior la scalare
+    xmax = -1e100;
+    xmin = 1e100;
+    ymax = -1e100;
+    ymin = 1e100;
+    for (t = -pi + ratia; t < pi; t += ratia) {
+        double x, y;
+        x = 2 * (a * cos(t) + b) * cos(t);
+        xmax = (xmax < x) ? x : xmax;
+        xmin = (xmin > x) ? x : xmin;
+ 
+        y = 2 * (a * cos(t) + b) * sin(t);
+        ymax = (ymax < y) ? y : ymax;
+        ymin = (ymin > y) ? y : ymin;
+    }
+ 
+    xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+    ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+ 
+    // afisarea punctelor propriu-zise precedata de scalare
+    glColor3f(1, 0.1, 0.1); // rosu
+    glBegin(GL_LINE_STRIP);
+    for (t = -pi; t < pi; t += ratia) {
+        double x, y;
+        x = 2 * (a * cos(t) + b) * cos(t) / xmax;
+        y = 2 * (a * cos(t) + b) * sin(t) / ymax;
+ 
+        glVertex2d(x, y);
+    }
+    glEnd();
+}
+
+void Display4() {
+    double xmax, ymax, xmin, ymin;
+    double a = 0.1, b = 0.2;
+    double pi = 4 * atan(1.0);
+    double ratia = 0.01;
+    double t;
+ 
+    // calculul valorilor maxime/minime ptr. x si y
+    // aceste valori vor fi folosite ulterior la scalare
+
+    xmax = a - b ;
+    xmin = a - b ;
+    ymax = a+1;
+    ymin = a-1;
+    for(t = -25 + ratia; t<= 25; t+=ratia) {
+        double x, y;
+        x = -a * t - b * sin(t);
+        xmax = (xmax < x) ? x : xmax;
+        xmin = (xmin > x) ? x : xmin;
+ 
+        y = -a - b * sin(t);
+        ymax = (ymax < y) ? y : ymax;
+        ymin = (ymin > y) ? y : ymin;
+    }
+ 
+    xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+    ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+ 
+    // afisarea punctelor propriu-zise precedata de scalare
+    glColor3f(1, 0.1, 0.1); // rosu
+    glBegin(GL_LINE_STRIP);
+    for(t = -25 + ratia; t<= 25; t+=ratia) {
+        double x, y;
+        x = (-a * t + b * sin(t)) / xmax;
+        y = (-a - b * cos(t)) / ymax;
+ 
+        glVertex2d(x, y);
+    }
+    glEnd();
+}
+
+void Display5() {
+   double xmax, ymax, xmin, ymin;
+   double R = 0.1, r = 0.3;
+   double pi = 4 * atan(1.0);
+   double ratia = 0.05;
+   double t;
+
+   // calculul valorilor maxime/minime ptr. x si y
+   // aceste valori vor fi folosite ulterior la scalare
+   xmax = 1;
+   xmin = -1;
+   ymax = 1;
+   ymin = 1;
+   for (t = 0 + ratia; t < 2 * pi ; t += ratia) {
+      double x1, y1;
+      x1 = (R + r) * cos((r/R) * t) - r * cos(t + (r/R)*t);
+      xmax = (xmax < x1) ? x1 : xmax;
+      xmin = (xmin > x1) ? x1 : xmin;
+
+      y1 = (R + r) * sin((r/R) * t) - r * sin(t + (r/R)*t);
+      ymax = (ymax < y1) ? y1 : ymax;
+      ymin = (ymin > y1) ? y1 : ymin;
+   }
+
+   xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+   ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+
+   // afisarea punctelor propriu-zise precedata de scalare
+   glColor3f(1,0.1,0.1); // rosu
+   glBegin(GL_LINE_STRIP); 
+   for (t = 0 + ratia; t < 2 * pi ; t += ratia) {
+      double x1, y1;
+     x1 = (R + r) * cos((r/R) * t) - r * cos(t + (r/R)*t);
+     y1 = (R + r) * sin((r/R) * t) - r * sin(t + (r/R)*t);
+      glVertex2f(x1,y1);
+   }
+   glEnd();
+}
+
+void Display6() {
+   double xmax, ymax, xmin, ymin;
+   double R = 0.1, r = 0.3;
+   double pi = 4 * atan(1.0);
+   double ratia = 0.05;
+   double t;
+
+   // calculul valorilor maxime/minime ptr. x si y
+   // aceste valori vor fi folosite ulterior la scalare
+   xmax = 1;
+   xmin = -1;
+   ymax = 1;
+   ymin = 1;
+   for (t = 0 + ratia; t < 2 * pi ; t += ratia) {
+      double x1, y1;
+      x1 = (R - r) * cos((r/R) * t) - r * cos(t - (r/R)*t);
+      xmax = (xmax < x1) ? x1 : xmax;
+      xmin = (xmin > x1) ? x1 : xmin;
+
+      y1 = (R - r) * sin((r/R) * t) - r * sin(t - (r/R)*t);
+      ymax = (ymax < y1) ? y1 : ymax;
+      ymin = (ymin > y1) ? y1 : ymin;
+   }
+
+   xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+   ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+
+   // afisarea punctelor propriu-zise precedata de scalare
+   glColor3f(1,0.1,0.1); // rosu
+   glBegin(GL_LINE_STRIP); 
+   for (t = 0 + ratia; t < 2 * pi ; t += ratia) {
+      double x1, y1;
+     x1 = (R - r) * cos((r/R) * t) - r * cos(t - (r/R)*t);
+     y1 = (R - r) * sin((r/R) * t) - r * sin(t - (r/R)*t);
+      glVertex2f(x1,y1);
+   }
+   glEnd();
+}
+
+void Display7() {
+   double xmax, ymax, xmin, ymin;
+   double a = 0.4;
+   double pi = 4 * atan(1.0);
+   double ratia = 0.05;
+   double t, r1, r2;
+
+   // calculul valorilor maxime/minime ptr. x si y
+   // aceste valori vor fi folosite ulterior la scalare
+   xmax = a;
+   xmin = -a;
+   ymax = a;
+   ymin = -a;
+
+   r1 = a * (sqrt(2 * cos(2 * t)));
+   r2 = -a * (sqrt(2 * cos(2 * t)));
+
+   for (t = - pi/4 + ratia; t < pi/4 ; t += ratia) {
+      double x1, y1, x2, y2;
+      x1 = r1 * cos(t);
+      xmax = (xmax < x1) ? x1 : xmax;
+      xmin = (xmin > x1) ? x1 : xmin;
+
+      y1 = r1 * sin(t);
+      ymax = (ymax < y1) ? y1 : ymax;
+      ymin = (ymin > y1) ? y1 : ymin;
+
+      x2 = r2 * cos(t);
+      xmax = (xmax < x2) ? x2 : xmax;
+      xmin = (xmin > x2) ? x2 : xmin;
+
+    
+      y2 = r2 * sin(t);
+      ymax = (ymax < y2) ? y2 : ymax;
+      ymin = (ymin > y2) ? y2 : ymin;
+      
+   }
+
+   xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+   ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+
+   // afisarea punctelor propriu-zise precedata de scalare
+   glColor3f(1,0.1,0.1); // rosu
+   glBegin(GL_LINE_STRIP); 
+   for (t = -pi/4 + ratia; t < pi/4; t += ratia) {
+      double x1, y1, x2, y2;
+     x1 = r1 * cos(t);
+     
+     y1 = r1 * sin(t);
+    
+     glVertex2f(x1,y1);
+    }
+    
+    for (t = -pi/4 + ratia; t < pi/4 ; t += ratia) {
+      double x1, y1, x2, y2;
+     
+     x2 = r2 * cos(t);
+     
+     y2 = r2 * sin(t);
+
+      glVertex2f(x2,y2);
+    }
+    
+   glEnd();
+}
+
+void Display8() {
+   double xmax, ymax, xmin, ymin;
+   double a = 0.02;
+   double pi = 4 * atan(1.0);
+   double ratia = 0.05;
+   double t, r, stuff;
+
+   // calculul valorilor maxime/minime ptr. x si y
+   // aceste valori vor fi folosite ulterior la scalare
+   xmax = a;
+   xmin = a * EulerConstant;
+   ymax = a;
+   ymin = -a;
+   stuff = 1+t;
+   r = a * (pow(EulerConstant, stuff));
+   
+
+   for (t = 0 + ratia; t < 100 ; t += ratia) {
+      double x1, y1;
+      x1 = r * cos(t);
+      xmax = (xmax < x1) ? x1 : xmax;
+      xmin = (xmin > x1) ? x1 : xmin;
+
+      y1 = r * sin(t);
+      ymax = (ymax < y1) ? y1 : ymax;
+      ymin = (ymin > y1) ? y1 : ymin;
+   }
+
+   xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+   ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+
+   // afisarea punctelor propriu-zise precedata de scalare
+   glColor3f(1,0.1,0.1); // rosu
+   glBegin(GL_LINE_STRIP); 
+   for (t = 0 + ratia; t < 100; t += ratia) {
+      double x1, y1;
+     x1 = r * cos(t);
+     
+     y1 = r * sin(t);
+    
+     glVertex2f(x1,y1);
+    }
+    
+    
+   glEnd();
+}
+
+void Display9() {
+   double pi = 4 * atan(1.0);
+   double ratia = 0.05;
+   double xmax = 100;
+   double xmin = 0;
+   double ymin = 0;
+   double ymax = 1;
+
+   // afisarea punctelor propriu-zise precedata de scalare
+   glColor3f(1,0.1,0.1); // rosu
+   glBegin(GL_LINE_STRIP); 
+   for (double x = xmax ; x >=0 + ratia; x -= ratia) {
+      double x1, y1;
+      x1 = x / xmax;
+      y1 = ((nearbyint(x)/x)/ ymax);
+      
+
+      glVertex2f(x1,y1);
+   }
+   glEnd();
+}
 
 void Init(void) {
 
@@ -120,6 +416,27 @@ void Display(void) {
       break;
    default:
       break;
+   case '3':
+      Display3();
+      break;   
+   case '4':
+      Display4();
+      break; 
+   case '5':
+      Display5();
+      break;    
+    case '6':
+      Display6();
+      break;    
+    case '7':
+      Display7();
+      break;      
+     case '8':
+      Display8();
+      break;      
+      case '9':
+      Display9();
+      break;          
    }
 
    glFlush();
